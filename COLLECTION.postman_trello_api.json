@@ -20,7 +20,7 @@
 							"let generatedBoardName = pm.environment.get(\"boardName\");",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(200);",
+							"    pm.response.to.have.status(300);",
 							"});",
 							"",
 							"pm.test(\"Test the name of board\", function () {",
