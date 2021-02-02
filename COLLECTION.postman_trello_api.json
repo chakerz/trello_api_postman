@@ -1,0 +1,239 @@
+{
+	"info": {
+		"_postman_id": "7ce01da1-fa1e-4d67-98bd-68ff8e904172",
+		"name": "Trello API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Create a new board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"// JSON response data",
+							"const jsonData = pm.response.json();",
+							"",
+							"// Get the generated Name of board from global variable \"boardName\"",
+							"let generatedBoardName = pm.environment.get(\"boardName\");",
+							"",
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Test the name of board\", function () {",
+							"      pm.expect(jsonData.name).to.eql(generatedBoardName);",
+							"});",
+							"",
+							"pm.test(\"Response json should return board prefs\", function () {",
+							"    pm.expect(pm.response.json()).to.have.property('prefs')",
+							"        .and.to.include.keys(['permissionLevel', 'hideVotes', 'voting']);",
+							"});",
+							"",
+							"",
+							"// Save the board ID to a global variable \"boardId\" ",
+							"pm.environment.set(\"boardId\", jsonData.id);"
+						],
+						"type": "text/javascript"
+					}
+				},
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"",
+							"function getRandomInt(max) {",
+							"  return Math.floor(Math.random() * Math.floor(max));",
+							"}",
+							"",
+							"// Name generator",
+							"function generateName(){",
+							"  return \"Board Nr. \" + getRandomInt(99999);",
+							"}",
+							"",
+							"// Save the generated name to a global variable \"boardName\" ",
+							"pm.environment.set(\"boardName\", generateName());",
+							"",
+							"console.log(pm.environment.get(\"boardName\"));",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards?key={{trelloKey}}&token={{trelloToken}}&name={{boardName}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{trelloKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{trelloToken}}"
+						},
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Retrieve lists from board",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"",
+							"const jsonData = pm.response.json();",
+							"",
+							"let todo;",
+							"",
+							"pm.test(\"Test boardlist ToDo\", function () {",
+							"",
+							"    for(key in jsonData){",
+							"    ",
+							"        if(jsonData[key].hasOwnProperty('name')){    ",
+							"            if(jsonData[key].name == 'To Do')",
+							"                todo = jsonData[key];",
+							"                // // Save the toDo List ID",
+							"                pm.environment.set(\"listId\", todo.id);",
+							"        }",
+							"    }",
+							"    pm.expect(todo.name).to.eql('To Do');",
+							"});",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/boards/:id/lists?key={{trelloKey}}&token={{trelloToken}}&name={{boardName}}",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"boards",
+						":id",
+						"lists"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{trelloKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{trelloToken}}"
+						},
+						{
+							"key": "name",
+							"value": "{{boardName}}"
+						}
+					],
+					"variable": [
+						{
+							"key": "id",
+							"value": "{{boardId}}",
+							"type": "string"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create new card in ToDo",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {",
+							"    pm.response.to.have.status(200);",
+							"});",
+							"",
+							"pm.test(\"Response json should return card name\", function () {",
+							"    pm.expect(pm.response.json()).to.have.property('name');",
+							"});",
+							"",
+							"pm.test(\"Response json should return cover size\", function () {",
+							"    pm.expect(pm.response.json()).to.have.nested.property('cover.size', 'normal');",
+							"});",
+							"",
+							"console.log(\"END TESTING\")"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"url": {
+					"raw": "https://api.trello.com/1/cards?key={{trelloKey}}&token={{trelloToken}}&idList={{listId}}&name=New webseite&desc=Create a new website for itinera. Do this task with prio 1",
+					"protocol": "https",
+					"host": [
+						"api",
+						"trello",
+						"com"
+					],
+					"path": [
+						"1",
+						"cards"
+					],
+					"query": [
+						{
+							"key": "key",
+							"value": "{{trelloKey}}"
+						},
+						{
+							"key": "token",
+							"value": "{{trelloToken}}"
+						},
+						{
+							"key": "idList",
+							"value": "{{listId}}"
+						},
+						{
+							"key": "name",
+							"value": "New webseite"
+						},
+						{
+							"key": "desc",
+							"value": "Create a new website for itinera. Do this task with prio 1"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}
