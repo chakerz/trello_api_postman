@@ -13,6 +13,8 @@
 					"script": {
 						"exec": [
 							"",
+							"console.log(\"TEST: Create New Board\");",
+							"",
 							"// JSON response data",
 							"const jsonData = pm.response.json();",
 							"",
@@ -20,7 +22,7 @@
 							"let generatedBoardName = pm.environment.get(\"boardName\");",
 							"",
 							"pm.test(\"Status code is 200\", function () {",
-							"    pm.response.to.have.status(300);",
+							"    pm.response.to.have.status(200);",
 							"});",
 							"",
 							"pm.test(\"Test the name of board\", function () {",
@@ -44,6 +46,7 @@
 					"script": {
 						"exec": [
 							"",
+							"// Random Number",
 							"function getRandomInt(max) {",
 							"  return Math.floor(Math.random() * Math.floor(max));",
 							"}",
@@ -53,9 +56,14 @@
 							"  return \"Board Nr. \" + getRandomInt(99999);",
 							"}",
 							"",
+							"// LOG Pre-request",
+							"console.log(\"Pre-reqeust JOP: BoardName Generator\");",
+							"",
 							"// Save the generated name to a global variable \"boardName\" ",
 							"pm.environment.set(\"boardName\", generateName());",
 							"",
+							"// LOG",
+							"console.log(\"Boardname wurde generiert: \" + pm.environment.get(\"boardName\"));",
 							"console.log(pm.environment.get(\"boardName\"));",
 							""
 						],
@@ -64,10 +72,7 @@
 				}
 			],
 			"request": {
-				"auth": {
-					"type": "apikey"
-				},
-				"method": "GET",
+				"method": "POST",
 				"header": [],
 				"url": {
 					"raw": "https://api.trello.com/1/boards?key={{trelloKey}}&token={{trelloToken}}&name={{boardName}}",
@@ -106,6 +111,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"//",
+							"console.log(\"TEST: Retrieve lists from board\");",
 							"",
 							"const jsonData = pm.response.json();",
 							"",
@@ -179,6 +186,8 @@
 					"listen": "test",
 					"script": {
 						"exec": [
+							"console.log(\"TEST: Create new card in ToDo\");",
+							"",
 							"pm.test(\"Status code is 200\", function () {",
 							"    pm.response.to.have.status(200);",
 							"});",
